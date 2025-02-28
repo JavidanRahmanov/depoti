@@ -14,5 +14,4 @@ public class UserResponseDTO {
     private String name;
     private String phoneNumber;
     private List<ListingRequestDTO> listings;
-    private List<FavoritesRequestDTO> favorites;
 }

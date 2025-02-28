@@ -14,6 +14,5 @@ public class UserRequestDTO {
     private String password;
     private String phoneNumber;
     private List<Long> listingIds;  // Satıcının digər elanları
-    private List<Long> favoriteIds;
 }
 

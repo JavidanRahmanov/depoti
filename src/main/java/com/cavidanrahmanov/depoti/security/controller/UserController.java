@@ -1,5 +1,6 @@
 package com.cavidanrahmanov.depoti.security.controller;
 
+import com.cavidanrahmanov.depoti.security.dto.LoginRequestDTO;
 import com.cavidanrahmanov.depoti.security.dto.UserRequestDTO;
 import com.cavidanrahmanov.depoti.security.model.Users;
 import com.cavidanrahmanov.depoti.security.service.UserService;
@@ -22,8 +23,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Users user){
-        return userService.verify(user);
+    public String login(@RequestBody LoginRequestDTO loginRequest){
+        return userService.verify(loginRequest);
     }
 
 }

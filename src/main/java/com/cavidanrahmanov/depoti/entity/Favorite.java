@@ -18,14 +18,15 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
+    private Long userId;
+    private String temporaryUserId;
+    private Long listingId;
 
-    @ManyToOne
-    @JoinColumn(name = "listing_id", nullable = false)
-    private Listing listing;
-
-    private boolean isFavorite = false;
+    public Favorite(Long userId, String temporaryUserId, Long itemId) {
+        this.userId = userId;
+        this.temporaryUserId = temporaryUserId;
+        this.listingId = itemId;
+    }
+    
 }
 

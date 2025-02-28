@@ -8,12 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SearchRepository extends JpaRepository<Listing,Integer> {
+public interface SearchRepository extends JpaRepository<Listing,Long> {
 
-    @Query("SELECT l from Listing l WHERE " +
-            "LOWER(l.title)  LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(l.description)  LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(l.category)  LIKE LOWER(CONCAT('%', :keyword, '%')) "
-    )
-    List<Listing> searchListings(String keyword);
+    @Query("SELECT l FROM Listing l WHERE " +
+            "l.normalizedTitle LIKE CONCAT('%', :normalizedKeyword, '%') OR " +
+            "l.normalizedDescription LIKE CONCAT('%', :normalizedKeyword, '%') OR " +
+            "l.normalizedCategory LIKE CONCAT('%', :normalizedKeyword, '%')")
+    List<Listing> searchListingsByNormalized(String normalizedKeyword);
 }

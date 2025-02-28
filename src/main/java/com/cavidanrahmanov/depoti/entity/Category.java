@@ -1,7 +1,6 @@
 package com.cavidanrahmanov.depoti.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,11 +10,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "categories")
-//@Builder
 @Getter
 @Setter
 @RequiredArgsConstructor
 public class Category {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,9 +25,11 @@ public class Category {
     @JoinColumn(name = "parent_id")
     private Category parentCategory;
 
+    @OneToMany(mappedBy = "category")
+    private List<Listing> listings = new ArrayList<>();
+
     @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL)
     private List<Category> subCategories = new ArrayList<>();
-
 
 }
 

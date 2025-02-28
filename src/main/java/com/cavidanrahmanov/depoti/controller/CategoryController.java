@@ -1,37 +1,34 @@
 package com.cavidanrahmanov.depoti.controller;
 
-import com.cavidanrahmanov.depoti.entity.Category;
+import com.cavidanrahmanov.depoti.dto.response.CategoryResponseDTO;
 import com.cavidanrahmanov.depoti.entity.Listing;
-import com.cavidanrahmanov.depoti.repository.CategoryRepository;
 import com.cavidanrahmanov.depoti.repository.ListingRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.cavidanrahmanov.depoti.service.CategoryService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/depoti/categories")
+@RequiredArgsConstructor
 public class CategoryController {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
+    private final ListingRepository listingRepo;
 
-    @Autowired
-    private ListingRepository listingRepository;
-
-    // Bütün ana kateqoriyalar (kategoriya ağacı)
+    // Bütün ana kateqoriyaların (kategoriya ağacı) DTO formatında əldə edilməsi
     @GetMapping("/tree")
-    public List<Category> getCategoryTree() {
-        return categoryRepository.findByParentCategoryIsNull();
+    public ResponseEntity<List<CategoryResponseDTO>> getCategoryTree() {
+        return ResponseEntity.ok(categoryService.getCategoryTreeDTO());
     }
 
-    // Seçilmiş bir kateqoriyaya aid elanları gətir
     @GetMapping("/{id}/items")
-    public List<Listing> getListingByCategory(@PathVariable Long id) {
-        return listingRepository.findByCategoryId(id);
+    public ResponseEntity<List<Listing>> getListingByCategory(@PathVariable Long id) {
+        // 1) CategoryService ilə subtree-dən bütün ID-ləri topla
+        List<Long> catIds = categoryService.getSubCategoryIds(id);
+
+        // 2) Bütün bu kateqoriya ID-lərinə aid elanları bazadan tap
+        return ResponseEntity.ok(listingRepo.findByCategoryIdIn(catIds));
     }
 }
-

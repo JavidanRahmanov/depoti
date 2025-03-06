@@ -2,15 +2,20 @@ package com.cavidanrahmanov.depoti.controller;
 
 import com.cavidanrahmanov.depoti.dto.request.ListingRequestDTO;
 import com.cavidanrahmanov.depoti.entity.Listing;
+import com.cavidanrahmanov.depoti.security.dto.UserRequestDTO;
 import com.cavidanrahmanov.depoti.service.ListingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/depoti/listings")
@@ -18,24 +23,21 @@ import java.io.IOException;
 public class ListingController {
 
     private final ListingService listingService;
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
-    @PostMapping("/listing")
-    public ResponseEntity<?> addListing(@RequestPart ListingRequestDTO listingDTO,
-                                        @RequestPart MultipartFile imageFile) {
+    @PostMapping(value = "/listing", consumes =  MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addListing(
+            @RequestPart("listingDTO") @Valid ListingRequestDTO listingDTO,
+            @RequestPart("images") List<MultipartFile> images,
+            @AuthenticationPrincipal UserRequestDTO currentUserDTO) {
         try {
-            Listing listing = listingService.addListing(listingDTO, imageFile);
+
+            Listing listing = listingService.addListing(listingDTO, images, currentUserDTO);
             return new ResponseEntity<>(listing, HttpStatus.CREATED);
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    @GetMapping("/listing/{listingId}/image")
-    public ResponseEntity<byte[]> getImageByListingId(@PathVariable Long listingId) {
-        Listing listing = listingService.getListingById(listingId);
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(listing.getImageType()))
-                .body(listing.getImageDate());
     }
 
     @GetMapping("/{id}")

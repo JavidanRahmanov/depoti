@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -22,8 +23,13 @@ public class Users {
     private String username;
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Favorite> favorites;
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorites",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "listing_id")
+    )
+    private Set<Listing> favoriteListings;
 
     @OneToMany(mappedBy = "seller")
     private List<Listing> listings = new ArrayList<>();

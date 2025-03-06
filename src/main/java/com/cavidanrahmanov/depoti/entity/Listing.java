@@ -7,8 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "listing")
@@ -22,9 +21,13 @@ public class Listing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String userName;
     private String title;
     private String description;
     private double price;
+
+    @ManyToMany(mappedBy = "favoriteListings")
+    private Set<Users> favoritedBy = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -35,16 +38,7 @@ public class Listing {
     private Users seller;
 
     @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Favorite> favorites;
-
-    private String imageUrl;
-    private String imageName;
-    private String imageType;
-
-    @Lob
-    private byte[] imageDate;
-
-    private double imageNo;
+    private List<Image> images = new ArrayList<>();
 
     private String listingNumber;
     private String normalizedTitle;
@@ -56,11 +50,7 @@ public class Listing {
     }
 
     private boolean isExpired = false;
-
-    // Elanın yaradılma vaxtı
     private LocalDateTime createdAt;
-
-    // Elanın bitmə tarixi (10 gün sonra)
     private LocalDateTime expiryDate;
 
 

@@ -21,6 +21,9 @@ public class Category {
 
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    private CategoryType categoryType;
+
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Category parentCategory;

@@ -21,12 +21,12 @@ public class FavoritesService {
 
     public void addToFavorites(Long userId, String temporaryUserId, Long itemId) {
         if (userId != null) {
-            Optional<Favorite> existingFavorite = favoriteRepository.findByUserIdAndItemId(userId, itemId);
+            Optional<Favorite> existingFavorite = favoriteRepository.findByUserIdAndListingId(userId, itemId);
             if (existingFavorite.isEmpty()) {
                 favoriteRepository.save(new Favorite(userId, null, itemId));
             }
         } else {
-            Optional<Favorite> existingFavorite = favoriteRepository.findByTemporaryUserIdAndItemId(temporaryUserId, itemId);
+            Optional<Favorite> existingFavorite = favoriteRepository.findByTemporaryUserIdAndListingId(temporaryUserId, itemId);
             if (existingFavorite.isEmpty()) {
                 favoriteRepository.save(new Favorite(null, temporaryUserId, itemId));
             }

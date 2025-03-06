@@ -1,21 +1,27 @@
 package com.cavidanrahmanov.depoti.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Data
-@RequiredArgsConstructor
+@Entity
+@Table(name = "images")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Image {
 
     @Id
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String filename;
+    @Lob  // Büyük verileri saklamak için
+    private byte[] imageData;
 
-    @Column(name = "mime_type")
-    private String mimeType;
+    private String imageType; // Örn: image/png, image/jpeg
 
-    private byte[] data;
+    @ManyToOne
+    @JoinColumn(name = "listing_id", nullable = false)
+    private Listing listing;
 }
+

@@ -33,12 +33,11 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '3.4.0'
-//    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.5'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
-//    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.0.2'
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.0.2'
     implementation group: 'com.h2database', name: 'h2', version: '2.1.214'
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.2.1'
 

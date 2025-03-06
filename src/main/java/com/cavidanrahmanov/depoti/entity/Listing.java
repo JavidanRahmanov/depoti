@@ -49,6 +49,9 @@ public class Listing {
         this.listingNumber = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
     }
 
+    @Column(length = 2000) // Store file paths as text (comma-separated)
+    private String imagePaths;
+
     private boolean isExpired = false;
     private LocalDateTime createdAt;
     private LocalDateTime expiryDate;

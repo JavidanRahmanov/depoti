@@ -12,13 +12,19 @@ import com.cavidanrahmanov.depoti.security.model.Users;
 import com.cavidanrahmanov.depoti.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,21 +38,40 @@ public class ListingService {
     public Listing addListing(ListingRequestDTO listingDTO, List<MultipartFile> images, UserRequestDTO currentUserDTO) throws IOException {
         Listing listing = modelMapper.map(listingDTO, Listing.class);
 
-        // Hazırkı istifadəçini (auth olan user) təyin et
-        Users currentUser = modelMapper.map(currentUserDTO,Users.class);
-        listing.setSeller(currentUser);;
+        // Set the seller (current authenticated user)
+        Users currentUser = modelMapper.map(currentUserDTO, Users.class);
+        listing.setSeller(currentUser);
 
-        // Resim işlemleri
-        List<Image> imageList = new ArrayList<>();
+        // Save the listing first to get an ID (in case you need it for naming files)
+        Listing savedListing = listingRepository.save(listing);
+
+        // Save images as files and store file paths in a list
+        List<String> imagePaths = new ArrayList<>();
         for (MultipartFile file : images) {
-            Image image = new Image();
-            image.setImageData(file.getBytes());
-            image.setImageType(file.getContentType());
-            image.setListing(listing);
-            imageList.add(image);
+            String filePath = saveImage(file);  // Save image to file system
+            imagePaths.add(filePath);
         }
 
-        return listingRepository.save(listing);
+        // Store the image paths as a single string (comma-separated) in the listing
+        savedListing.setImagePaths(String.join(",", imagePaths));
+
+        return listingRepository.save(savedListing);
+    }
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
+    private String saveImage(MultipartFile file) throws IOException {
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath); // Create directory if it doesn't exist
+        }
+
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename(); // Unique filename
+        Path filePath = uploadPath.resolve(fileName);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        return filePath.toString(); // Return file path to store in DB
     }
 
 

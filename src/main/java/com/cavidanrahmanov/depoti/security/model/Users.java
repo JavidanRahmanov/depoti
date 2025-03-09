@@ -23,6 +23,7 @@ public class Users {
     private String username;
     private String password;
 
+
     @ManyToMany
     @JoinTable(
             name = "user_favorites",

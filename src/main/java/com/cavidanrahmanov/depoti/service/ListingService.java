@@ -1,8 +1,9 @@
 package com.cavidanrahmanov.depoti.service;
 
 import com.cavidanrahmanov.depoti.dto.request.ListingRequestDTO;
+import com.cavidanrahmanov.depoti.dto.response.ListingResponseDTO;
 import com.cavidanrahmanov.depoti.entity.Category;
-import com.cavidanrahmanov.depoti.entity.Image;
+//import com.cavidanrahmanov.depoti.entity.Image;
 import com.cavidanrahmanov.depoti.entity.Listing;
 import com.cavidanrahmanov.depoti.exception.NotFoundException;
 import com.cavidanrahmanov.depoti.repository.CategoryRepository;
@@ -35,29 +36,29 @@ public class ListingService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
 
-    public Listing addListing(ListingRequestDTO listingDTO, List<MultipartFile> images, UserRequestDTO currentUserDTO) throws IOException {
-        Listing listing = modelMapper.map(listingDTO, Listing.class);
-
-        // Set the seller (current authenticated user)
-        Users currentUser = modelMapper.map(currentUserDTO, Users.class);
-        listing.setSeller(currentUser);
-
-        // Save the listing first to get an ID (in case you need it for naming files)
-        Listing savedListing = listingRepository.save(listing);
-
-        // Save images as files and store file paths in a list
-        List<String> imagePaths = new ArrayList<>();
-        for (MultipartFile file : images) {
-            String filePath = saveImage(file);  // Save image to file system
-            imagePaths.add(filePath);
-        }
-
-        // Store the image paths as a single string (comma-separated) in the listing
-        savedListing.setImagePaths(String.join(",", imagePaths));
-
-        return listingRepository.save(savedListing);
-    }
-
+//    public Listing addListing(ListingRequestDTO listingDTO, List<MultipartFile> images, UserRequestDTO currentUserDTO) throws IOException {
+//        Listing listing = modelMapper.map(listingDTO, Listing.class);
+//
+//        // Set the seller (current authenticated user)
+//        Users currentUser = modelMapper.map(currentUserDTO, Users.class);
+//        listing.setSeller(currentUser);
+//
+//        // Save the listing first to get an ID (in case you need it for naming files)
+//        Listing savedListing = listingRepository.save(listing);
+//
+//        // Save images as files and store file paths in a list
+        //        List<String> imagePaths = new ArrayList<>();
+//        for (MultipartFile file : images) {
+//            String filePath = saveImage(file);  // Save image to file system
+//            imagePaths.add(filePath);
+//        }
+//
+//        // Store the image paths as a single string (comma-separated) in the listing
+//        savedListing.setImagePaths(String.join(",", imagePaths));
+//
+//        return listingRepository.save(savedListing);
+//    }
+//
     @Value("${file.upload-dir}")
     private String uploadDir;
 
@@ -74,6 +75,20 @@ public class ListingService {
         return filePath.toString(); // Return file path to store in DB
     }
 
+    public ListingResponseDTO addListing(ListingRequestDTO listingRequestDTO, MultipartFile imageFile) throws IOException {
+
+//        Listing savedListing = modelMapper.map(listingRequestDTO,Listing.class);
+//        listingRepository.save(savedListing);
+//       String filePath = saveImage(imageFile);
+//       savedListing.setImagePaths(filePath);
+
+        Listing savedListing = modelMapper.map(listingRequestDTO,Listing.class);
+        savedListing.setImageName(imageFile.getOriginalFilename());
+        savedListing.setImageType(imageFile.getContentType());
+        savedListing.setImageDate(imageFile.getBytes());
+        listingRepository.save(savedListing);
+        return modelMapper.map(savedListing,ListingResponseDTO.class);
+    }
 
     public Listing getListingById(Long listingId) {
         return listingRepository.findById(listingId)

@@ -1,22 +1,25 @@
 package com.cavidanrahmanov.depoti.controller;
 
 import com.cavidanrahmanov.depoti.dto.request.ListingRequestDTO;
+import com.cavidanrahmanov.depoti.dto.response.ListingResponseDTO;
 import com.cavidanrahmanov.depoti.entity.Listing;
 import com.cavidanrahmanov.depoti.security.dto.UserRequestDTO;
 import com.cavidanrahmanov.depoti.service.ListingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+//import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -28,31 +31,18 @@ public class ListingController {
 
     private final ListingService listingService;
 
-    private final ObjectMapper objectMapper; // from Jackson
+    @PostMapping(value = "/add",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addListing(@RequestPart("listing") ListingRequestDTO listingRequestDTO,
+                                        @RequestPart("image") MultipartFile imageFile) {
 
-    @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Listing> addListing(
-            @Parameter(description = "Listing DTO in JSON format", required = true)
-            @RequestPart("listingDTO") String listingDTOJson,
-
-            @Parameter(description = "User DTO in JSON format", required = true)
-            @RequestPart("currentUserDTO") String currentUserDTOJson,
-
-            @Parameter(description = "Images", required = true)
-            @RequestPart("images") List<MultipartFile> images
-    ) {
         try {
-            // Parse the JSON strings into DTO objects
-            ListingRequestDTO listingDTO = objectMapper.readValue(listingDTOJson, ListingRequestDTO.class);
-            UserRequestDTO userDTO = objectMapper.readValue(currentUserDTOJson, UserRequestDTO.class);
-
-            Listing savedListing = listingService.addListing(listingDTO, images, userDTO);
-            return ResponseEntity.ok(savedListing);
-
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+           ListingResponseDTO listingResponseDTO = listingService.addListing(listingRequestDTO,imageFile);
+            return new ResponseEntity<>(listingResponseDTO,HttpStatus.CREATED);
+        } catch (Exception e) {
+           return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Listing> getListing(@PathVariable Long id) {

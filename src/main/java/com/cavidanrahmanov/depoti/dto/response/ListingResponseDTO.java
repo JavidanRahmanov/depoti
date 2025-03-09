@@ -1,10 +1,14 @@
 package com.cavidanrahmanov.depoti.dto.response;
 
 import com.cavidanrahmanov.depoti.entity.Category;
+import com.cavidanrahmanov.depoti.entity.CategoryType;
 import com.cavidanrahmanov.depoti.security.model.Users;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,20 +22,16 @@ public class ListingResponseDTO {
     private String title;
     private String description;
     private double price;
-    private Category category;
-    private Users seller;
-    private String imageUrl;
+    @Schema(description = "Kateqoriya növü", example = "MID_CATEGORY")
+    private CategoryType categoryType;
+    private boolean isDelivery;
+    private String cityName;
+    @Pattern(regexp = "^[0-9]+$", message = "Mobil nömrə yalnız reqəmlərdən ibarət olmalıdır")
+    private String email;
+    private String userName;
+    private String phoneNumber;
+    private List<MultipartFile> images;
     private String imageName;
     private String imageType;
     private byte[] imageDate;
-    private double imageNo;
-    private String listingNumber;
-    private String normalizedTitle;
-    private String normalizedDescription;
-    private String normalizedCategory;
-    private boolean isExpired;
-    private LocalDateTime createdAt;
-    private LocalDateTime expiryDate;
-    private int viewCount;
-    private List<FavoriteResponseDTO> favorites;
 }

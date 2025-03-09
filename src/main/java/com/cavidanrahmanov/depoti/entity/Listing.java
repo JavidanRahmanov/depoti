@@ -37,8 +37,8 @@ public class Listing {
     @JoinColumn(name = "seller_id")
     private Users seller;
 
-    @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> images = new ArrayList<>();
+//    @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Image> images = new ArrayList<>();
 
     private String listingNumber;
     private String normalizedTitle;
@@ -49,13 +49,18 @@ public class Listing {
         this.listingNumber = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
     }
 
-    @Column(length = 2000) // Store file paths as text (comma-separated)
-    private String imagePaths;
+//    @Column(length = 2000) // Store file paths as text (comma-separated)
+//    private String imagePaths;
 
     private boolean isExpired = false;
     private LocalDateTime createdAt;
     private LocalDateTime expiryDate;
 
+    private String imageName;
+    private String imageType;
+
+    @Lob
+    private byte[] imageDate;
 
     @PreUpdate
     public void setNormalizedFields() {

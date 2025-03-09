@@ -14,7 +14,7 @@ public class CategoryMapper {
         CategoryResponseDTO dto = new CategoryResponseDTO();
         dto.setId(category.getId());
         dto.setName(category.getName());
-        dto.setParentId(category.getParentCategory() != null ? category.getParentCategory().getId() : null);
+        dto.setParentId(category.getParent() != null ? category.getParent().getId() : null);
 
         dto.setSubCategories(
                 category.getSubCategories() != null

@@ -1,5 +1,7 @@
 package com.cavidanrahmanov.depoti.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "category")
 @Getter
 @Setter
 @RequiredArgsConstructor
@@ -19,19 +21,23 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private CategoryType categoryType;
+    @Column(nullable = false)
+    private CategoryType type;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    private Category parentCategory;
+    private Category parent;
 
     @OneToMany(mappedBy = "category")
     private List<Listing> listings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Category> subCategories = new ArrayList<>();
 
 }

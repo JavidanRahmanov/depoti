@@ -1,0 +1,149 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Bu API, cascade kateqoriya seçimləri üçün endpoint-lər təmin edir. İstifadəçi əvvəlcə head kateqoriyanı, sonra ona uyğun mid və sub kateqoriyaları seçə bilir.",
+    "version": "1.0.0",
+    "title": "Elan Kateqoriya API"
+  },
+  "host": "localhost:8080",
+  "basePath": "/api",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/categories/head": {
+      "get": {
+        "summary": "Bütün Head kateqoriyaları qaytarır",
+        "description": "Sistemdə mövcud olan bütün baş kateqoriyaların siyahısını alır.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Uğurlu cavab",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/HeadCategory"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{headId}/mid": {
+      "get": {
+        "summary": "Seçilmiş Head kateqoriyaya uyğun Mid kateqoriyaları qaytarır",
+        "description": "Parametr olaraq head kateqoriyanın ID-sini qəbul edir və ona uyğun orta kateqoriyaların siyahısını alır.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "headId",
+            "in": "path",
+            "description": "Head kateqoriyanın ID-si",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Uğurlu cavab",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MidCategory"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{midId}/sub": {
+      "get": {
+        "summary": "Seçilmiş Mid kateqoriyaya uyğun Sub kateqoriyaları qaytarır",
+        "description": "Parametr olaraq mid kateqoriyanın ID-sini qəbul edir və ona uyğun alt kateqoriyaların siyahısını alır.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "midId",
+            "in": "path",
+            "description": "Mid kateqoriyanın ID-si",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Uğurlu cavab",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SubCategory"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "HeadCategory": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "example": 1
+        },
+        "name": {
+          "type": "string",
+          "example": "NƏQLİYYAT"
+        }
+      }
+    },
+    "MidCategory": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "example": 2
+        },
+        "name": {
+          "type": "string",
+          "example": "AVTOMOBİLLƏR"
+        },
+        "headId": {
+          "type": "integer",
+          "format": "int64",
+          "example": 1
+        }
+      }
+    },
+    "SubCategory": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "example": 6
+        },
+        "name": {
+          "type": "string",
+          "example": "BMW"
+        },
+        "midId": {
+          "type": "integer",
+          "format": "int64",
+          "example": 2
+        }
+      }
+    }
+  }
+}
